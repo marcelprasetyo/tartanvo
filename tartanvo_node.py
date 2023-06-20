@@ -100,10 +100,11 @@ class TartanVONode(object):
 
         if self.last_img is not None:
             pose_msg = PoseStamped()
-            pose_msg.header.stamp = msg.header.stamp
-            # marcelprasetyo: add filename to the header
-            pose_msg.header.frame_id = msg.header.frame_id
-            # pose_msg.header.frame_id = 'map'
+            # tyuxiang: change header stamp to match frame timing
+            nanosecs = int(msg.header.frame_id[:-4])
+            pose_msg.header.stamp.secs = int(nanosecs/1e9)
+            pose_msg.header.stamp.nsecs = int((nanosecs/1e9 - int(nanosecs/1e9))*1e9)
+            pose_msg.header.frame_id = 'map'
             sample = {'img1': self.last_img, 
                       'img2': image_np, 
                       'intrinsic': self.intrinsic
